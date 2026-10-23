@@ -1,0 +1,14 @@
+{
+  "hugo-new-post:create-post": [
+    {
+      "modifiers": [],
+      "key": "F8"
+    }
+  ],
+  "obsidian-git:push": [
+    {
+      "modifiers": [],
+      "key": "F9"
+    }
+  ]
+}
