@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-# 新建一篇文章（Obsidian 用户也可以直接建文件夹，这个脚本只是省事）
+# 新建一篇文章（与 Obsidian 的「新建博客文章」命令共用同一个模板）
 #
-#   ./scripts/new-post.sh "我的第一篇博客"
+#   ./scripts/new-post.sh "文章标题"
 #   ./scripts/new-post.sh "Hugo 学习笔记" --tags hugo,教程
 #
-# 会在 content/posts/<slug>/index.md 生成 page bundle，
-# 图片直接丢进同一个文件夹，正文里用 ![](图片名.png) 引用即可。
+# 生成 content/posts/<slug>/index.md，默认 draft = true。
 
 set -euo pipefail
 
@@ -22,40 +21,51 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-# 中文标题也要能生成目录名：转小写、空格转连字符、丢掉不安全的字符。
-# 结果是中文 slug，URL 里会以百分号编码呈现，但 Obsidian 里看得懂。
-SLUG="$(printf '%s' "$TITLE" \
-  | tr '[:upper:]' '[:lower:]' \
-  | sed -e 's/[[:space:]]\+/-/g' -e 's#[/\\:*?"<>|]#-#g' -e 's/-\+/-/g' -e 's/^-//' -e 's/-$//')"
+python3 - "$ROOT" "$TITLE" "$TAGS" <<'PY'
+import datetime
+import os
+import re
+import sys
 
-DIR="$ROOT/content/posts/$SLUG"
-if [ -e "$DIR" ]; then
-  echo "已存在: $DIR" >&2
-  exit 1
-fi
+root, title, tags = sys.argv[1], sys.argv[2], sys.argv[3]
 
-mkdir -p "$DIR"
-TAGS_TOML=""
-if [ -n "$TAGS" ]; then
-  TAGS_TOML="tags = [$(printf '%s' "$TAGS" | awk -F, '{for(i=1;i<=NF;i++){printf "%s\"%s\"", (i>1?", ":""), $i}}')]"
-fi
+# 与 Obsidian 插件保持一致的 slug 规则：保留中文，危险字符转 -
+slug = re.sub(r'[\\/:*?"<>|#^\[\]]', '-', title.strip().lower())
+slug = re.sub(r'\s+', '-', slug)
+slug = re.sub(r'-+', '-', slug).strip('-').strip('.') or 'untitled'
 
-cat > "$DIR/index.md" <<EOF
-+++
-title = "$TITLE"
-date = $(date +%Y-%m-%dT%H:%M:%S%:z)
-draft = true
-$TAGS_TOML
-+++
+base = os.path.join(root, 'content', 'posts', slug)
+folder = base
+n = 2
+while os.path.exists(os.path.join(folder, 'index.md')):
+    folder = f'{base}-{n}'
+    n += 1
+os.makedirs(folder, exist_ok=True)
 
-在这里开始写正文。
+with open(os.path.join(root, 'content', 'templates.md'), encoding='utf-8') as fh:
+    content = fh.read()
 
-<!--
-写作提示：
-- draft = true 时本地预览可见，但不会发布到线上。写完改成 false。
-- 图片直接放在本文件夹，正文用 ![](图片名.png) 引用。
-- 想加摘要，在 +++ 之后写一行 <!--more-->，之前的内容会成为列表页摘要。
--->
-EOF
+now = datetime.datetime.now().astimezone().strftime('%Y-%m-%dT%H:%M:%S%z')
+now = now[:-2] + ':' + now[-2:]
 
-echo "已创建: $DIR/index.md"
+def esc(value):
+    return value.replace('\\', '\\\\').replace('"', '\\"')
+
+content, title_count = re.subn(
+    r'^title\s*=.*$', lambda m: f'title = "{esc(title)}"', content, count=1, flags=re.M)
+content, date_count = re.subn(
+    r'^date\s*=.*$', lambda m: f'date = {now}', content, count=1, flags=re.M)
+
+if title_count != 1 or date_count != 1:
+    sys.exit('模板缺少 title 或 date 行，请检查 content/templates.md')
+
+if tags:
+    tag_list = ', '.join(f'"{t.strip()}"' for t in tags.split(',') if t.strip())
+    content, _ = re.subn(
+        r'^tags\s*=.*$', lambda m: f'tags = [{tag_list}]', content, count=1, flags=re.M)
+
+path = os.path.join(folder, 'index.md')
+with open(path, 'w', encoding='utf-8') as fh:
+    fh.write(content)
+print(f'已创建: {path}')
+PY

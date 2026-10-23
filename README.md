@@ -32,14 +32,18 @@
 │   ├── about.md
 │   ├── archives.md
 │   └── search.md
+├── assets/css/extended/custom.css  # 站点级自定义样式
 ├── themes/PaperMod/       # 主题源码（已本地化）
-├── scripts/new-post.sh    # 新建文章脚本
+├── scripts/
+│   ├── new-post.sh        # 命令行新建文章
+│   └── check.sh           # 推送前自检
+├── CLAUDE.md              # 项目约定速查
 └── .github/workflows/hugo.yml  # 构建 + 部署
 ```
 
 每篇文章是**一个文件夹**（Hugo 的 page bundle），图片和正文放在一起。
 
-## 首次配置 GitHub
+## GitHub 配置（已完成，仅作记录）
 
 1. **推送仓库**（本机到 GitHub 的 SSH 已验证可用）：
 
@@ -127,7 +131,26 @@ hugo server --buildFuture   # 包含未来日期的文章
 ./scripts/new-post.sh "文章标题" --tags 标签1,标签2
 ```
 
-会在 `content/posts/` 下生成 page bundle，默认 `draft = true`。
+与 Obsidian 命令共用 `content/templates.md`，生成 page bundle，默认 `draft = true`。
+
+### 快捷键
+
+`.obsidian/hotkeys.json` 里已经设好：
+
+| 键 | 命令 | 说明 |
+|---|---|---|
+| `F8` | 新建博客文章 | 等同命令面板里的 `Hugo New Post: 新建博客文章` |
+| `F9` | Git: Push | 只推送已有提交；commit 由自动同步负责 |
+
+### 本地自检
+
+改动配置、主题或模板后，推送前跑一遍：
+
+```bash
+./scripts/check.sh
+```
+
+会检查 wikilink、模板 draft 状态、构建警告，以及首页/搜索索引/RSS 等关键产物。
 
 ### ⚠️ Obsidian 的关键设置
 
@@ -172,6 +195,31 @@ git add -A && git commit -m "post: 文章标题" && git push
 - **并发控制**：连续 push 时，正在进行的部署会跑完，排队中的旧任务作废，
   避免线上出现半发布状态。
 - **显式 baseURL**：从 `configure-pages` 取地址，换仓库名/域名不用改代码。
+
+## 常用修改
+
+| 想改什么 | 改哪里 |
+|---|---|
+| 站名、描述、作者、社交链接 | `config/_default/hugo.toml` 的 `[params]` |
+| 首页欢迎语 | 同上，`[params.homeInfoParams]` |
+| 导航菜单 | `config/_default/menus.zh-cn.toml` |
+| 界面文案（目录、上一页、阅读时间） | `i18n/zh-CN.yaml` |
+| 新文章默认内容 | `content/templates.md` |
+| 自定义样式 | `assets/css/extended/custom.css` |
+| 主题外观 | `themes/PaperMod/`（vendored，可直接改） |
+| 构建与部署 | `.github/workflows/hugo.yml` |
+| 域名 / 仓库名 | `config/_default/hugo.toml` 的 `baseURL`；自定义域名另加 `static/CNAME` |
+
+仓库配置和文档的改动**不会**被 Obsidian 插件自动提交（`limitToVault` 只提交 `content/`），
+需要手动：
+
+```bash
+git add -A && git commit -m "chore: ..." && git push
+```
+
+改完先跑 `./scripts/check.sh`，需要逐页看效果再用 `hugo server -D`。
+
+更完整的项目约定见 [`CLAUDE.md`](CLAUDE.md)。
 
 ## 常见问题
 

@@ -1,0 +1,12 @@
+/* 站点级自定义样式。
+   PaperMod 会把 assets/css/extended/ 下的所有 CSS 合并进主样式表，
+   这里的规则排在主题默认样式之后，可以直接覆盖。示例：
+
+   :root {
+     --main-width: 820px;
+   }
+
+   .post-content img {
+     border-radius: 8px;
+   }
+*/
