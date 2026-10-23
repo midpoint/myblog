@@ -108,7 +108,8 @@ hugo server --buildFuture   # 包含未来日期的文章
    GitHub Actions 随后构建发布。不需要敲任何 git 命令。
 
 状态栏会显示当前分支和待提交的文件数。想立刻同步，命令面板执行
-`Git: Commit-and-sync`。
+`Git: Commit-and-sync`。写作期间建议保持 `draft = true`，定稿后再改成 `false`，
+这样即使自动提交了半成品也不会发布出去。
 
 ### 命令行方式（可选）
 
@@ -177,6 +178,12 @@ git add -A && git commit -m "post: 文章标题" && git push
 
 **换设备写作？** clone 仓库，把 `content/` 作为 vault 打开，关掉 Restricted mode 即可，
 插件和设置都在仓库里。避免两台设备同时编辑同一篇，否则 pull 时会有合并冲突。
+
+**写完立刻关了 Obsidian？** 定时器没跑到就退出的话，这次改动会在下次打开时补提交。
+急的话关之前执行一次 `Git: Commit-and-sync`。
+
+**怎么确认真的推上去了？** 状态栏的 Git 图标会显示待推送提交数；也可以看
+`https://github.com/midpoint/myblog/commits/main`，或命令面板里的 `Git: Open history`。
 
 **图片显示不出来？** 确认图片和 `index.md` 在同一个文件夹，正文里是
 `![](图片名.png)` 而不是 `![[图片名.png]]`。
