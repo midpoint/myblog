@@ -41,7 +41,7 @@
 1. **推送仓库**（本机到 GitHub 的 SSH 已验证可用）：
 
    ```bash
-   git remote add origin git@github.com:<用户名>/<仓库名>.git
+   git remote add origin git@github.com:midpoint/myblog.git
    git push -u origin main
    ```
 
@@ -50,7 +50,7 @@
    不要选 "Deploy from a branch"，那套走的是另一条流水线，和本仓库的 workflow 冲突。
 
 3. 第一次 push 后到 **Actions** 标签页看 `Build and deploy Hugo site` 是否跑通。
-   成功后站点在 `https://<用户名>.github.io/<仓库名>/`。
+   成功后站点在 `https://midpoint.github.io/myblog/`。
 
 ### 换仓库名或自定义域名
 

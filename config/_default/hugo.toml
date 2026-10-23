@@ -1,4 +1,4 @@
-baseURL = "https://midpoint.github.io/blog/"
+baseURL = "https://midpoint.github.io/myblog/"
 # Hugo 0.158 起 languageCode 被 locale 取代（顶层字符串）。
 # 这个值会进 <html lang> 和 RSS 的 <language> 标签。
 locale = "zh-CN"
