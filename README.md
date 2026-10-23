@@ -21,6 +21,7 @@
 │   └── menus.zh-cn.toml   # 导航菜单
 ├── content/               # ← Obsidian vault 指向这里
 │   ├── .obsidian/         # Obsidian 设置（随仓库走，换设备保持一致）
+│   │   └── plugins/obsidian-git/  # 自动 commit + push 插件（已预装并配置）
 │   ├── posts/
 │   │   └── hello-hugo/
 │   │       ├── index.md   # 文章
@@ -76,15 +77,22 @@ hugo server -D       # 包含 draft: true 的草稿
 hugo server --buildFuture   # 包含未来日期的文章
 ```
 
-访问 http://localhost:1313/blog/ （注意路径带 `/blog/`，和 baseURL 一致）。
+访问 http://localhost:1313/myblog/ （注意路径带 `/myblog/`，和 baseURL 一致）。
 
 ## 写作流程
 
-### 方式一：Obsidian（推荐）
+### 每台设备一次性准备
 
 1. Obsidian → Open folder as vault → 选择本仓库的 **`content/`** 目录。
-2. 在 `content/posts/` 下新建文件夹（文件夹名就是 URL 里的 slug）。
-3. 文件夹里新建 `index.md`，开头写 front matter：
+2. Settings → Community plugins → 关闭 **Restricted mode**。
+   插件已经随仓库装好（`obsidian-git`），关掉限制后会自动加载。
+3. 确认这台机器的 `git` 可用且 `git push` 免密（本机 SSH key 已配好）。
+   插件调用的是系统 git。
+
+### 日常写作
+
+1. 在 `content/posts/` 下新建文件夹（文件夹名是 URL 里的 slug），里面新建 `index.md`。
+2. 开头写 front matter：
 
    ```toml
    +++
@@ -92,14 +100,17 @@ hugo server --buildFuture   # 包含未来日期的文章
    date = 2026-10-23T10:00:00+08:00
    draft = false
    tags = ["标签1", "标签2"]
-   categories = ["分类"]
    +++
    ```
 
-4. 图片直接拖进同一个文件夹，Obsidian 会自动插入 `![](图片名.png)`。
-5. 写完把 `draft` 改成 `false`，提交推送。
+3. 图片直接拖进同一文件夹，Obsidian 会自动插入 `![](图片名.png)`。
+4. 正常保存即可。**停止编辑约 1 分钟后**，Git 插件会自动 commit + push，
+   GitHub Actions 随后构建发布。不需要敲任何 git 命令。
 
-### 方式二：命令行
+状态栏会显示当前分支和待提交的文件数。想立刻同步，命令面板执行
+`Git: Commit-and-sync`。
+
+### 命令行方式（可选）
 
 ```bash
 ./scripts/new-post.sh "文章标题" --tags 标签1,标签2
@@ -122,15 +133,30 @@ hugo server --buildFuture   # 包含未来日期的文章
 
 ## 发布
 
+正常情况下不需要手动发布。Obsidian 的 Git 插件每分钟检查一次，有改动就：
+
+1. commit，消息格式 `content: 自动同步 2026-10-23 14:30:00`，正文列出改动的文件
+2. pull（`pullBeforePush`，多设备时避免互相覆盖）
+3. push
+
+随后 `.github/workflows/hugo.yml` 自动构建部署，通常一分钟内生效。
+
+插件配置在 `content/.obsidian/plugins/obsidian-git/data.json`，关键项：
+
+| 设置 | 值 | 作用 |
+|---|---|---|
+| Auto commit-and-sync interval | 1 分钟 | 定时检查，有改动才提交 |
+| Auto commit-and-sync after stopping file edits | 开 | 编辑过程中不提交，停下来才提交 |
+| Limit file operations to the vault | 开 | 只提交 `content/` 内的改动，不碰仓库其他文件 |
+| Disable popups for no changes | 开 | 没改动时不弹通知 |
+
+手动兜底（插件出问题或改的是仓库其他文件时）：
+
 ```bash
-git add -A
-git commit -m "post: 文章标题"
-git push
+git add -A && git commit -m "post: 文章标题" && git push
 ```
 
-推送后 Actions 自动构建部署，通常一分钟内生效。
-
-工作流做了两件事值得注意：
+工作流本身还有两个细节：
 
 - **并发控制**：连续 push 时，正在进行的部署会跑完，排队中的旧任务作废，
   避免线上出现半发布状态。
@@ -140,6 +166,17 @@ git push
 
 **文章写了但线上没有？** 检查 front matter 的 `draft` 是否为 `true`，
 以及 `date` 是不是未来时间——Hugo 默认不发布未来日期的文章。
+
+**Git 插件没生效？** 确认 Settings → Community plugins 里 Restricted mode 已关闭，
+且插件列表里 `Git` 是启用状态。插件要求 Obsidian 1.13.0 以上。状态栏没有 Git 图标
+就说明没加载；命令面板执行 `Git: Commit-and-sync` 可以看到具体报错。
+
+**自动提交了但没 push 成功？** 插件用的是系统 git 和本机 SSH key。在终端执行
+`cd content && git push` 复现一下，通常是 SSH key 或网络问题。本机已配好，
+换设备时需要重新配 SSH。
+
+**换设备写作？** clone 仓库，把 `content/` 作为 vault 打开，关掉 Restricted mode 即可，
+插件和设置都在仓库里。避免两台设备同时编辑同一篇，否则 pull 时会有合并冲突。
 
 **图片显示不出来？** 确认图片和 `index.md` 在同一个文件夹，正文里是
 `![](图片名.png)` 而不是 `![[图片名.png]]`。
