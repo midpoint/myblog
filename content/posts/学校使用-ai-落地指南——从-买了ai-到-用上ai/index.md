@@ -1,7 +1,7 @@
 +++
 title = "学校使用 AI 落地指南——从\"买了AI\"到\"用上AI\""
 date = 2026-10-23T15:15:34+08:00
-draft = true
+draft = false
 tags = []
 categories = []
 +++
