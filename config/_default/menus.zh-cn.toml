@@ -1,0 +1,29 @@
+# PaperMod 菜单。注意：中文站点的菜单标题直接写中文，
+# weight 决定顺序，数字小的排前面。
+
+[[main]]
+  name = "文章"
+  pageRef = "posts"
+  weight = 10
+
+[[main]]
+  name = "归档"
+  url = "archives/"
+  weight = 20
+
+[[main]]
+  name = "标签"
+  url = "tags/"
+  weight = 30
+
+[[main]]
+  name = "搜索"
+  url = "search/"
+  weight = 40
+
+[[main]]
+  name = "关于"
+  url = "about/"
+  weight = 50
+
+# 首页侧边栏的社交图标与站点信息在 hugo.toml 的 [params] 里配置。

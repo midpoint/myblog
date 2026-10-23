@@ -1,0 +1,83 @@
+baseURL = "https://midpoint.github.io/blog/"
+# Hugo 0.158 起 languageCode 被 locale 取代（顶层字符串）。
+# 这个值会进 <html lang> 和 RSS 的 <language> 标签。
+locale = "zh-CN"
+defaultContentLanguage = "zh-CN"
+title = "Midpoint's Blog"
+theme = "PaperMod"
+enableRobotsTXT = true
+hasCJKLanguage = true
+
+# 让 Hugo 读取每个文件的 Git 提交时间。
+# 文章没写 lastmod 时，页面会显示最后修改时间；CI 里 checkout 需要 fetch-depth: 0。
+enableGitInfo = true
+
+# 让 GitHub Actions 直接产出压缩后的 HTML
+[minify]
+  disableXML = true
+  minifyOutput = true
+
+[pagination]
+  pagerSize = 10
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[params]
+  # 首页、归档、上一篇/下一篇只看这个 section 里的文章。
+  # 如果以后加了 notes/ 之类的分区又想让它出现在首页，在这里追加。
+  mainSections = ["posts"]
+  title = "Midpoint's Blog"
+  description = "记录技术、思考与生活"
+  author = "Midpoint"
+  DateFormat = "2006-01-02"
+  defaultTheme = "auto"
+  ShowReadingTime = true
+  ShowShareButtons = false
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  ShowRssButtonInSectionTermList = true
+  ShowFullTextinRSS = false
+  ShowToc = true
+  TocOpen = false
+  disableAnchoredHeadings = false
+  comments = false
+  hidemeta = false
+  ShowWordCount = true
+
+  # 本地搜索，依赖上面 outputs 的 JSON
+  [params.homeInfoParams]
+    Title = "你好，我是 Midpoint"
+    Content = "这里记录我的技术笔记、项目复盘和一些零碎想法。"
+
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/midpoint"
+
+  [[params.socialIcons]]
+    name = "rss"
+    url = "index.xml"
+
+  [params.assets]
+    favicon = ""
+    disableHLJS = false
+
+[markup]
+  [markup.highlight]
+    noClasses = false
+    codeFences = true
+    guessSyntax = true
+    lineNos = false
+    lineNumbersInTable = true
+  [markup.goldmark.renderer]
+    # 允许正文里写裸 HTML，Obsidian 导出的内容偶尔需要
+    unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
+
+# Obsidian 用户常见需求：front matter 用 TOML，和 Obsidian 的 Properties 兼容
+[frontmatter]
+  date = ["date", "publishDate", "lastmod"]
+  lastmod = [":git", "lastmod", "date", "publishDate"]

@@ -1,0 +1,16 @@
+# Hugo 构建产物
+/public/
+/resources/
+.hugo_build.lock
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# Obsidian 的临时状态文件。
+# .obsidian 里的设置本身要提交，这样换设备打开 vault 还是同一套配置；
+# 但 workspace*.json 记录的是窗口布局和打开的文件，每次开关都会变，没必要进版本库。
+content/.obsidian/workspace*.json
+content/.obsidian/cache
+content/.obsidian/*.log
+content/.trash/

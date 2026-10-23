@@ -1,0 +1,74 @@
+name: Build and deploy Hugo site
+
+on:
+  push:
+    branches: [main]
+  # 允许在 Actions 页面手动触发
+  workflow_dispatch:
+
+permissions:
+  contents: read # 读取仓库内容
+  pages: write # 部署到 Pages
+  id-token: write # deploy-pages 用 OIDC 校验来源
+
+# 同一时间只跑一个部署。新的 push 会让排队中的旧任务作废，
+# 但绝不打断正在进行的部署，避免线上站点处于半发布状态。
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HUGO_VERSION: 0.168.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # 拉全历史：PaperMod 的 lastmod 走 :git，需要每篇文件的真实提交时间。
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: ${{ env.HUGO_VERSION }}
+          extended: true
+
+      - name: Show Hugo version
+        run: hugo version
+
+      # 必须在 build 之前：它产出 base_url，hugo 用它生成本站点内链接
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build
+        # --gc 清理未使用缓存，--minify 压缩产物。
+        # 显式传 baseURL，仓库改名或换自定义域名后站内链接不会断。
+        run: |
+          hugo \
+            --gc \
+            --minify \
+            --baseURL "${{ steps.pages.outputs.base_url }}/"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
