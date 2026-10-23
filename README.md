@@ -21,7 +21,10 @@
 │   └── menus.zh-cn.toml   # 导航菜单
 ├── content/               # ← Obsidian vault 指向这里
 │   ├── .obsidian/         # Obsidian 设置（随仓库走，换设备保持一致）
-│   │   └── plugins/obsidian-git/  # 自动 commit + push 插件（已预装并配置）
+│   │   └── plugins/
+│   │       ├── obsidian-git/    # 自动 commit + push
+│   │       └── hugo-new-post/   # 一键新建文章
+│   ├── templates.md       # 新文章模板（draft，不会发布）
 │   ├── posts/
 │   │   └── hello-hugo/
 │   │       ├── index.md   # 文章
@@ -29,7 +32,6 @@
 │   ├── about.md
 │   ├── archives.md
 │   └── search.md
-├── layouts/               # 站点级模板覆盖（目前为空，按需添加）
 ├── themes/PaperMod/       # 主题源码（已本地化）
 ├── scripts/new-post.sh    # 新建文章脚本
 └── .github/workflows/hugo.yml  # 构建 + 部署
@@ -85,31 +87,39 @@ hugo server --buildFuture   # 包含未来日期的文章
 
 1. Obsidian → Open folder as vault → 选择本仓库的 **`content/`** 目录。
 2. Settings → Community plugins → 关闭 **Restricted mode**。
-   插件已经随仓库装好（`obsidian-git`），关掉限制后会自动加载。
+   插件已经随仓库装好（`obsidian-git`、`hugo-new-post`），关掉限制后会自动加载。
 3. 确认这台机器的 `git` 可用且 `git push` 免密（本机 SSH key 已配好）。
    插件调用的是系统 git。
 
 ### 日常写作
 
-1. 在 `content/posts/` 下新建文件夹（文件夹名是 URL 里的 slug），里面新建 `index.md`。
-2. 开头写 front matter：
+**方式一：一键新建（推荐）**
 
-   ```toml
-   +++
-   title = "文章标题"
-   date = 2026-10-23T10:00:00+08:00
-   draft = false
-   tags = ["标签1", "标签2"]
-   +++
-   ```
+1. 命令面板（`Ctrl/Cmd + P`）执行 **`Hugo New Post: 新建博客文章`**，
+   或点左侧边栏的 `+` 图标。
+2. 输入文章标题，回车。
+3. 自动创建 `content/posts/<标题 slug>/index.md`，写好 front matter 并打开，
+   光标停在正文位置。
+4. 图片直接拖进同一文件夹，Obsidian 会插入 `![](图片名.png)`。
+5. 定稿后把 `draft` 改成 `false`。停止编辑约 1 分钟后自动 commit + push，
+   Actions 随后构建发布。
 
-3. 图片直接拖进同一文件夹，Obsidian 会自动插入 `![](图片名.png)`。
-4. 正常保存即可。**停止编辑约 1 分钟后**，Git 插件会自动 commit + push，
-   GitHub Actions 随后构建发布。不需要敲任何 git 命令。
+同名文章已存在时，文件夹会自动加 `-2`、`-3` 后缀，不会覆盖。中文标题直接用作
+文件夹名和 URL，标点会被替换成 `-`。
 
-状态栏会显示当前分支和待提交的文件数。想立刻同步，命令面板执行
-`Git: Commit-and-sync`。写作期间建议保持 `draft = true`，定稿后再改成 `false`，
-这样即使自动提交了半成品也不会发布出去。
+**方式二：手动建文件夹**
+
+在 `content/posts/` 下新建文件夹，里面新建 `index.md`，手动写 front matter。
+适合从别处搬文章进来的场景。
+
+### 文章模板
+
+模板在 **`content/templates.md`**，命令面板执行 `Hugo New Post: 打开文章模板`
+即可编辑。
+
+- 新建文章时，插件替换模板里第一行 `title` 和 `date`，其余内容原样复制。
+- 可以在这里加默认字段，比如 `tags`、`categories`、`summary`，会带到每篇新文章。
+- **不要**把模板里的 `draft` 改成 `false`，否则模板本身会被发布到 `/templates/`。
 
 ### 命令行方式（可选）
 

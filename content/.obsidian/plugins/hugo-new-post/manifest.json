@@ -1,0 +1,9 @@
+{
+  "id": "hugo-new-post",
+  "name": "Hugo New Post",
+  "version": "1.0.0",
+  "minAppVersion": "1.5.0",
+  "description": "Create a Hugo page bundle from the vault template.",
+  "author": "Midpoint",
+  "isDesktopOnly": false
+}
