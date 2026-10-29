@@ -1,7 +1,7 @@
 +++
 title = "那些劝你放下屠刀的圣人，从来没告诉过你手里没刀有多惨"
 date = 2026-10-29T10:06:13+08:00
-draft = true
+draft = false
 tags = []
 categories = []
 +++
