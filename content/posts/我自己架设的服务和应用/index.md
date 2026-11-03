@@ -19,4 +19,4 @@ categories = []
 11. 青龙面板：http://127.0.0.1:5700 （minit200）
 12. IPTV：http://127.0.0.1:1905/密码/admin  （minit200）
 13. V2rayA：http://127.0.0.1:2017/  （minit200）
-14. 
+14. 博客：https://midpoint.github.io/myblog/
