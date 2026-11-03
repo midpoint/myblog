@@ -11,4 +11,5 @@ categories = []
 3. Bing 壁纸 CORS 代理：https://bingproxy.midpoint2005.workers.dev/
 4. 英语学习：https://learn-english.majun.eu.org
 5. cline转发：https://cline2api.majun.eu.org/
-6. 
+6. 时序守望：https://renewhelper.majun.eu.org
+7. 
