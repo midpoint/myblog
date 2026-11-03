@@ -1,7 +1,7 @@
 +++
 title = "我自己架设的服务和应用"
 date = 2026-11-03T09:57:22+08:00
-draft = true
+draft = false
 tags = []
 categories = []
 +++
