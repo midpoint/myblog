@@ -12,4 +12,7 @@ categories = []
 4. 英语学习：https://learn-english.majun.eu.org
 5. cline转发：https://cline2api.majun.eu.org/
 6. 时序守望：https://renewhelper.majun.eu.org
-7. 
+7. 在线影院：https://movie.majun.eu.org
+8. RSS阅读：https://readly.majun.eu.org
+9. 多网关转发：https://anymirror.majun.eu.org
+10. 
