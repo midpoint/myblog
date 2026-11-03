@@ -15,5 +15,5 @@ categories = []
 7. 在线影院：https://movie.majun.eu.org
 8. RSS阅读：https://readly.majun.eu.org
 9. 多网关转发：https://anymirror.majun.eu.org
-10. Uptime Kuma http://127.0.0.1:3111
+10. Uptime Kuma http://127.0.0.1:3111  （minit200）
 11. 
