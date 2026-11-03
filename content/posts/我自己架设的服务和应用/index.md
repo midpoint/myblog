@@ -10,4 +10,5 @@ categories = []
 2. 热点新闻：https://60s.midpoint2005.workers.dev/
 3. Bing 壁纸 CORS 代理：https://bingproxy.midpoint2005.workers.dev/
 4. 英语学习：https://learn-english.majun.eu.org
-5. 
+5. cline转发：https://cline2api.majun.eu.org/
+6. 
