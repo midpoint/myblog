@@ -7,4 +7,5 @@ categories = []
 +++
 
 1. 墙纸：https://wallpaper.majun.eu.org
-2.  
+2. 热点新闻：https://60s.midpoint2005.workers.dev/
+3. 
