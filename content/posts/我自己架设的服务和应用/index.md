@@ -6,5 +6,5 @@ tags = []
 categories = []
 +++
 
-1. 墙纸：https://wallpaper.midpoint2005.workers.dev/
-2. 
+1. 墙纸：https://wallpaper.majun.eu.org
+2.  
