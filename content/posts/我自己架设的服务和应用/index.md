@@ -16,4 +16,5 @@ categories = []
 8. RSS阅读：https://readly.majun.eu.org
 9. 多网关转发：https://anymirror.majun.eu.org
 10. Uptime Kuma http://127.0.0.1:3111  （minit200）
-11. 
+11. 青龙面板：http://127.0.0.1:5700
+12. 
